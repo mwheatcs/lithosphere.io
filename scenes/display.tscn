@@ -1,5 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://bkbu5snew2mj1"]
+[gd_scene load_steps=5 format=3 uid="uid://bkbu5snew2mj1"]
 
+[ext_resource type="Script" uid="uid://dgas80higkixl" path="res://scenes/stat_display.gd" id="1_52sky"]
 [ext_resource type="Texture2D" uid="uid://b7vx65thm5yqm" path="res://icon.svg" id="1_wy1qo"]
 [ext_resource type="Script" uid="uid://dlw07215b8i8r" path="res://inventory/inventory_controller.gd" id="2_52sky"]
 [ext_resource type="Script" uid="uid://boanld6qdjvoa" path="res://inventory/change_inventory.gd" id="3_mwlbc"]
@@ -29,32 +30,32 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="MoneyIcon" type="TextureButton" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
+[node name="Stats" type="BoxContainer" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
 layout_mode = 2
-texture_normal = ExtResource("1_wy1qo")
 
-[node name="MoneyLabel" type="Label" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
+[node name="Money" type="HBoxContainer" parent="CanvasLayer/VBoxContainer/CounterDisplay/Stats"]
 layout_mode = 2
-text = "Money: 0"
+script = ExtResource("1_52sky")
+texture = ExtResource("1_wy1qo")
+Name = "Money"
 
-[node name="Minerals" type="TextureButton" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
+[node name="Minerals" type="HBoxContainer" parent="CanvasLayer/VBoxContainer/CounterDisplay/Stats"]
 layout_mode = 2
-texture_normal = ExtResource("1_wy1qo")
+script = ExtResource("1_52sky")
+texture = ExtResource("1_wy1qo")
+Name = "Minerals"
 
-[node name="MineralLabel" type="Label" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
-layout_mode = 2
-text = "Minerals: 0"
-
-[node name="Control4" type="Control" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
+[node name="Control2" type="Control" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Inventory" type="ItemList" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
+[node name="Inventory" type="ItemList" parent="CanvasLayer/VBoxContainer/CounterDisplay" node_paths=PackedStringArray("stats")]
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_52sky")
 placeholder_icon = ExtResource("1_wy1qo")
+stats = NodePath("../Stats")
 
 [node name="Sell" type="Button" parent="CanvasLayer/VBoxContainer/CounterDisplay" node_paths=PackedStringArray("inventory")]
 layout_mode = 2

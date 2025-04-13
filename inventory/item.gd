@@ -19,3 +19,13 @@ var icon : Texture2D :
 		return icon
 	set(value):
 		icon = value;
+
+var price : int :
+	get:
+		return price
+	set(value):
+		price = value
+		
+
+func get_sell_price():
+	return price * count
