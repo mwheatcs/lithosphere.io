@@ -2,7 +2,6 @@ class_name Inventory
 
 extends ItemList
 
-@export var inventory_size: int = 10
 @export var placeholder_icon: Texture2D
 @export var stats: Node;
 
@@ -22,36 +21,37 @@ func update_stats_ui(change_money: int) -> void:
 
 func _ready() -> void:
 	# TODO remove placeholders and add diff mineral item types
-	var ore_coords = [
-		Vector2i(4, 14),  # Ore type 1
-		Vector2i(4, 15),  # Ore type 2
-		Vector2i(4, 16),  # Ore type 3
-		Vector2i(4, 17)   # Ore type 4
-	]
-	var tile_size = Vector2(16, 16)  
-	var tileset_path = "res://assets/TileSetNature.png"
-
-	for i in range(1, inventory_size+1):
-		var ore_index = (i - 1) % ore_coords.size()
-		var ore_atlas_coords = ore_coords[ore_index]
-		var icon = Item.get_ore_atlas_texture(ore_atlas_coords, tile_size, tileset_path)
-		add_item(str(i), icon)
-		var temp_item = Item.new()
-		temp_item.icon = icon
-		temp_item.count = i
-		temp_item.price = i
-		items.append(temp_item)
+	#var ore_coords = [
+		#Vector2i(4, 14),  # Ore type 1
+		#Vector2i(4, 15),  # Ore type 2
+		#Vector2i(4, 16),  # Ore type 3
+		#Vector2i(4, 17)   # Ore type 4
+	#]
+	#var tile_size = Vector2(16, 16)  
+	#var tileset_path = "res://assets/TileSetNature.png"
+#
+	#for i in range(1, inventory_size+1):
+		#var ore_index = (i - 1) % ore_coords.size()
+		#var ore_atlas_coords = ore_coords[ore_index]
+		#var icon = Item.get_ore_atlas_texture(ore_atlas_coords, tile_size, tileset_path)
+		#add_item(str(i), icon)
+		#var temp_item = Item.new()
+		#temp_item.icon = icon
+		#temp_item.count = i
+		#temp_item.price = i
+		#items.append(temp_item)
 	
 	update_stats_ui(0)
 
 
 func get_item(index: int):
-	return items[index]
+	if items.size() > 0:
+		return items[index]
 
 
 func add_item_to_inventory(item: Item):
 	var item_in_inventory: bool = false
-	for i in inventory_size:
+	for i in items.size():
 		if items[i] == null:
 			continue
 		if item.Name == items[i].Name:
@@ -70,7 +70,7 @@ func add_item_to_inventory(item: Item):
 
 func remove_item_from_inventory(item: Item):
 	var remove_index: int = -1
-	for i in inventory_size:
+	for i in items.size():
 		if items[i] == null:
 			continue
 		if item.Name == items[i].Name:

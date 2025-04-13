@@ -2,8 +2,7 @@ extends Node2D
 
 @onready var minerals: TileMapLayer = $Minerals
 @onready var world_manager = get_node("/root/World")
-
-@export var inventory: Inventory
+@onready var inventory = get_node("/root/World/Display/CanvasLayer/VBoxContainer/CounterDisplay/Inventory")
 
 const MAP_WIDTH = 69
 const MAP_HEIGHT = 37
@@ -29,6 +28,14 @@ var highlight = null  # For drawing the highlight
 
 # Ore items
 var ores: Dictionary;
+var ore_coords = [
+		Vector2i(4, 14),  # Ore type 1
+		Vector2i(4, 15),  # Ore type 2
+		Vector2i(4, 16),  # Ore type 3
+		Vector2i(4, 17)   # Ore type 4
+	]
+var tile_size = Vector2(16, 16)  
+var tileset_path = "res://assets/TileSetNature.png"
 
 func _ready() -> void:
 	# Create a node for drawing the mineral highlight
@@ -201,11 +208,16 @@ func _process(delta: float) -> void:
 	highlight.queue_redraw()
 	pass
 
+# Initialize ore items
 func create_ore_types():
 	for i in range(1, 5):
 		ores[i] = Item.new()
 		ores[i].Name = "Ore Type " + str(i)
 		ores[i].price = i * i
+		
+		var ore_index = (i - 1) % ore_coords.size()
+		var ore_atlas_coords = ore_coords[ore_index]
+		ores[i].icon = Item.get_ore_atlas_texture(ore_atlas_coords, tile_size, tileset_path)
 
 # Deplete a mineral at the given coordinates
 func deplete_mineral(tile_coords: Vector2i) -> void:
