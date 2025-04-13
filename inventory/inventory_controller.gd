@@ -8,9 +8,16 @@ extends ItemList
 
 var items: Array = [];
 
+func update_inventory_ui():
+		if items.size() == 0:
+			hide()
+		else:
+			show()
+
 func update_stats_ui(change_money: int) -> void:
 	stats.get_child(0).change_count(change_money)
 	stats.get_child(1).set_count(items.size())
+	update_inventory_ui()
 
 
 func _ready() -> void:
@@ -48,6 +55,7 @@ func add_item_to_inventory(item: Item):
 	update_stats_ui(0)
 
 
+
 func remove_item_from_inventory(item: Item):
 	var remove_index: int = -1
 	for i in inventory_size:
@@ -62,6 +70,7 @@ func remove_item_from_inventory(item: Item):
 		remove_item(remove_index)
 	
 	update_stats_ui(0)
+
 
 
 func remove_item_index_from_inventory(index: int):

@@ -1,0 +1,109 @@
+[gd_scene load_steps=7 format=3 uid="uid://ct4040pqhvgjk"]
+
+[ext_resource type="Script" uid="uid://cefk04t4tkmaq" path="res://scenes/pause_menu.gd" id="1_nwcfo"]
+[ext_resource type="Shader" uid="uid://dpuvmy6es77gd" path="res://shaders/blur.gdshader" id="2_05uyy"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_myx47"]
+shader = ExtResource("2_05uyy")
+shader_parameter/lod = 0.0
+
+[sub_resource type="Animation" id="Animation_d3xb4"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:material:shader_parameter/lod")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.15, 0, 0.15, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_2nc7s"]
+resource_name = "blur"
+length = 0.3
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:material:shader_parameter/lod")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.15, 0, 0.15, 0, 0.847, -0.15, 0, 0.15, 0),
+"times": PackedFloat32Array(0, 0.3)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mxa3g"]
+_data = {
+&"RESET": SubResource("Animation_d3xb4"),
+&"blur": SubResource("Animation_2nc7s")
+}
+
+[node name="PauseMenu" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nwcfo")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_myx47")
+layout_mode = 2
+offset_right = 1152.0
+offset_bottom = 648.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MarginContainer"]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="CanvasLayer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PauseMenuButtons" type="VBoxContainer" parent="CanvasLayer/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Control" type="Control" parent="CanvasLayer/MarginContainer/HBoxContainer/PauseMenuButtons"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Resume" type="Button" parent="CanvasLayer/MarginContainer/HBoxContainer/PauseMenuButtons"]
+layout_mode = 2
+text = "Resume"
+
+[node name="Quit" type="Button" parent="CanvasLayer/MarginContainer/HBoxContainer/PauseMenuButtons"]
+layout_mode = 2
+text = "Quit"
+
+[node name="Control2" type="Control" parent="CanvasLayer/MarginContainer/HBoxContainer/PauseMenuButtons"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Control2" type="Control" parent="CanvasLayer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_mxa3g")
+}
+
+[connection signal="pressed" from="CanvasLayer/MarginContainer/HBoxContainer/PauseMenuButtons/Resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/HBoxContainer/PauseMenuButtons/Quit" to="." method="_on_quit_pressed"]
