@@ -59,10 +59,8 @@ offset_right = 1152.0
 offset_bottom = 648.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.780206, 0.96156, 1.54018e-06, 1)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = 52
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
 anchors_preset = 15

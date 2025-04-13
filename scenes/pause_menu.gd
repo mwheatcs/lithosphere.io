@@ -9,12 +9,14 @@ func _process(_delta) -> void:
 
 
 func resume():
+	$CanvasLayer.layer = 1
 	get_tree().paused = false
 	%PauseMenuButtons.visible = false
 	$AnimationPlayer.play_backwards("blur")
 
 
 func pause():
+	$CanvasLayer.layer = 52  # layer should be highest
 	get_tree().paused = true
 	%PauseMenuButtons.visible = true
 	$AnimationPlayer.play("blur")
