@@ -41,7 +41,7 @@ func add_item_to_inventory(item: Item):
 			continue
 		if item.Name == items[i].Name:
 			items[i].count += item.count
-			set_item_text(i, str(item.count))
+			set_item_text(i, str(items[i].count))
 			set_item_icon(i, item.icon)
 			item_in_inventory = true
 			
