@@ -1,8 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://dsuhx0qtb8rg0"]
+[gd_scene load_steps=7 format=3 uid="uid://dsuhx0qtb8rg0"]
 
 [ext_resource type="Script" uid="uid://8okma4e0wgoq" path="res://scenes/start_menu.gd" id="1_con2f"]
 [ext_resource type="Texture2D" uid="uid://c57g7nfasb4l7" path="res://assets/SpaceBackground.png" id="2_vjb58"]
 [ext_resource type="Script" uid="uid://d3vetptoigdse" path="res://scenes/zoom.gd" id="3_con2f"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_con2f"]
+font_size = 40
 
 [sub_resource type="Animation" id="Animation_vjb58"]
 resource_name = "zoom"
@@ -62,6 +65,11 @@ layout_mode = 2
 [node name="Control" type="Control" parent="HBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="Lithosphere" type="Label" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Lithosphere"
+label_settings = SubResource("LabelSettings_con2f")
 
 [node name="Start" type="Button" parent="HBoxContainer/VBoxContainer"]
 layout_mode = 2
