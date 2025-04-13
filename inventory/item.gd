@@ -13,6 +13,9 @@ var count : int :
 		return count
 	set(value):
 		count = value
+		
+func get_count() -> int:
+	return count
 
 var icon : Texture2D :
 	get:

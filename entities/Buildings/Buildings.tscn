@@ -1,10 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://dc00wgkhbn8ph"]
+[gd_scene load_steps=2 format=3 uid="uid://dc00wgkhbn8ph"]
 
 [ext_resource type="Script" uid="uid://buc1pjvu24fo8" path="res://entities/Buildings/buildingManager.gd" id="1_av4ra"]
-[ext_resource type="PackedScene" uid="uid://bj0tnrswtre7k" path="res://entities/Buildings/factory.tscn" id="2_h5vy5"]
 
 [node name="Buildings" type="Node2D"]
 script = ExtResource("1_av4ra")
-
-[node name="Factory" parent="." instance=ExtResource("2_h5vy5")]
-visible = false

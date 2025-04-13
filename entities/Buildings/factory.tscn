@@ -1,4 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://bj0tnrswtre7k"]
+[gd_scene load_steps=5 format=3 uid="uid://bj0tnrswtre7k"]
+
+[ext_resource type="Script" uid="uid://dqhq2ag63mc1i" path="res://entities/Buildings/factory.gd" id="1_rx631"]
+[ext_resource type="Texture2D" uid="uid://b7vx65thm5yqm" path="res://icon.svg" id="2_bapmq"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_q61jv"]
 load_path = "res://.godot/imported/Factory.png-b008d5d592c8491afe7951d75023c3ee.ctex"
@@ -6,7 +9,9 @@ load_path = "res://.godot/imported/Factory.png-b008d5d592c8491afe7951d75023c3ee.
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q61jv"]
 size = Vector2(300, 300)
 
-[node name="Factory" type="StaticBody2D"]
+[node name="Factory" type="StaticBody2D" groups=["factory"]]
+script = ExtResource("1_rx631")
+placeholder = ExtResource("2_bapmq")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = SubResource("CompressedTexture2D_q61jv")

@@ -28,9 +28,10 @@ func _ready() -> void:
 	update_stats_ui(0)
 
 
-func get_item(index: int):
+func get_item(index: int) -> Item:
 	if items.size() > 0:
 		return items[index]
+	return null
 
 
 func add_item_to_inventory(item: Item):
