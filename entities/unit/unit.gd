@@ -56,11 +56,19 @@ func _process(delta):
 	if has_target:
 		var direction = (target - global_position).normalized()
 		
-		# Check if we've reached the target (within a small threshold)
+		# Check if we can start mining at the current position
+		if is_mining_target:
+			var can_mine = check_if_can_mine()
+			if can_mine:
+				# We're close enough to the mineral - start mining
+				start_mining()
+				return
+		
+		# Check if we've reached a regular movement target
 		if global_position.distance_to(target) < 5.0:
 			if is_mining_target:
-				# We've reached a mining target - start mining
-				start_mining()
+				# We couldn't reach the mineral directly - try to get closer
+				is_turning = false
 			else:
 				# Regular movement target reached
 				has_target = false
@@ -336,6 +344,14 @@ func start_mining():
 	is_turning = false
 	
 	print("Started mining at coordinates: ", mining_tile_coords)
+	
+	# Debug current distance to the mineral
+	var layer_holder = find_layer_holder()
+	if layer_holder:
+		var mineral_pos = layer_holder.get_mineral_world_position(mining_tile_coords)
+		print("Distance to mineral: ", global_position.distance_to(mineral_pos))
+	else:
+		print("WARNING: Cannot find LayerHolder for mining debug")
 
 # Complete the mining operation
 func complete_mining():
@@ -344,16 +360,7 @@ func complete_mining():
 	mining_progress = 0.0
 	
 	# Get reference to layer_holder to deplete the resource
-	var layer_holder = get_node_or_null("../Main/layerHolder")
-
-	# If direct path doesn't work, try finding it another way
-	if not layer_holder:
-		var world = get_tree().get_nodes_in_group("world")
-		if world and world.size() > 0:
-			for node in world[0].get_children():
-				if "LayerHolder" in node.name:
-					layer_holder = node
-					break
+	var layer_holder = find_layer_holder()
 	
 	# Deplete the mineral if we found the layer holder
 	if layer_holder and layer_holder.has_method("deplete_mineral"):
@@ -373,3 +380,70 @@ func cancel_mining():
 		is_mining = false
 		mining_progress = 0.0
 		queue_redraw()
+
+# Check if the unit is close enough to its target mineral to begin mining
+func check_if_can_mine() -> bool:
+	if not is_mining_target or mining_tile_coords == Vector2i(-1, -1):
+		return false
+	
+	# Find the layer_holder more robustly - try all possible paths
+	var layer_holder = find_layer_holder()
+	if not layer_holder:
+		print("ERROR: Cannot find LayerHolder node")
+		return false
+	
+	# Calculate distance to the mining target
+	var mineral_world_pos = layer_holder.get_mineral_world_position(mining_tile_coords)
+	var distance = global_position.distance_to(mineral_world_pos)
+	
+	# Debug info
+	print("Mining check - Distance to mineral: ", distance, " | Mining range: ", layer_holder.MINING_RANGE)
+	
+	# Use a fixed mining range if layer_holder's range is too restrictive
+	var effective_mining_range = max(layer_holder.MINING_RANGE, 30.0)
+	return distance < effective_mining_range
+
+# Find the layer holder node - enhanced with multiple search paths
+func find_layer_holder():
+	# Try multiple possible paths
+	var paths_to_try = [
+		"/root/World/LayerHolder",
+		"/root/Main/LayerHolder",
+		"/root/World/layerHolder",  # lowercase L
+		"../LayerHolder",
+		"../../LayerHolder",
+		"../Main/layerHolder"
+	]
+	
+	# Try all paths
+	for path in paths_to_try:
+		var node = get_node_or_null(path)
+		if node:
+			print("Found LayerHolder at path: ", path)
+			return node
+	
+	# If direct paths fail, search through scene
+	var root = get_tree().get_root()
+	for child in root.get_children():
+		var result = _recursive_find_layer_holder(child)
+		if result:
+			print("Found LayerHolder through recursive search")
+			return result
+	
+	print("ERROR: Could not find LayerHolder node through any method")
+	return null
+
+# Helper function to recursively search for LayerHolder
+func _recursive_find_layer_holder(node, depth = 0):
+	if depth > 5:  # Limit recursion depth
+		return null
+		
+	if "LayerHolder" in node.name or "layerHolder" in node.name:
+		return node
+		
+	for child in node.get_children():
+		var result = _recursive_find_layer_holder(child, depth + 1)
+		if result:
+			return result
+	
+	return null

@@ -17,7 +17,7 @@ const ORE4_POS = Vector2i(4,17)
 const ORE4_DEPLETED_POS = Vector2i(6,17)
 const STONE_POS = Vector2i(17,13)
 
-const MINING_RANGE = 100.0
+const MINING_RANGE = 50.0
 const CELL_SIZE = Vector2(16, 16) 
 
 # Mineral highlighting variables
