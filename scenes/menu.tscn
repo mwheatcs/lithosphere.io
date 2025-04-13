@@ -36,6 +36,7 @@ script = ExtResource("1_con2f")
 [node name="Node2D" type="Node2D" parent="."]
 
 [node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
 offset_left = -1395.0
 offset_top = -781.0
 offset_right = 1165.0
