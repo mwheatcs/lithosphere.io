@@ -58,6 +58,7 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_52sky")
+inventory_size = 4
 placeholder_icon = ExtResource("1_wy1qo")
 stats = NodePath("../Stats")
 

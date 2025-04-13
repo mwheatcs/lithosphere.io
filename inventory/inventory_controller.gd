@@ -22,10 +22,22 @@ func update_stats_ui(change_money: int) -> void:
 
 func _ready() -> void:
 	# TODO remove placeholders and add diff mineral item types
+	var ore_coords = [
+		Vector2i(4, 14),  # Ore type 1
+		Vector2i(4, 15),  # Ore type 2
+		Vector2i(4, 16),  # Ore type 3
+		Vector2i(4, 17)   # Ore type 4
+	]
+	var tile_size = Vector2(16, 16)  
+	var tileset_path = "res://assets/TileSetNature.png"
+
 	for i in range(1, inventory_size+1):
-		add_item(str(i), placeholder_icon)
+		var ore_index = (i - 1) % ore_coords.size()
+		var ore_atlas_coords = ore_coords[ore_index]
+		var icon = Item.get_ore_atlas_texture(ore_atlas_coords, tile_size, tileset_path)
+		add_item(str(i), icon)
 		var temp_item = Item.new()
-		temp_item.icon = placeholder_icon
+		temp_item.icon = icon
 		temp_item.count = i
 		temp_item.price = i
 		items.append(temp_item)
