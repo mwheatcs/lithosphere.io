@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=4 uid="uid://vb12gyg0t26t"]
+[gd_scene load_steps=12 format=4 uid="uid://vb12gyg0t26t"]
 
 [ext_resource type="Script" uid="uid://kepeewlgii2l" path="res://scenes/layer_holder.gd" id="1_1bvp3"]
 [ext_resource type="Texture2D" uid="uid://cjqtuxwf75751" path="res://assets/TilesetFloor.png" id="2_lquwl"]
 [ext_resource type="Texture2D" uid="uid://ccjfqbix63o6n" path="res://assets/TilesetFloorDetail.png" id="3_7mycd"]
 [ext_resource type="Texture2D" uid="uid://7jhbgxuch0pc" path="res://assets/TilesetNature.png" id="4_272bh"]
+[ext_resource type="Texture2D" uid="uid://c5eopy28u7ftt" path="res://assets/items-orescrystalsingots-transparent.png" id="5_tbgi4"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5vw27"]
 texture = ExtResource("2_lquwl")
@@ -946,12 +947,21 @@ texture = ExtResource("4_272bh")
 10:20/0 = 0
 11:20/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tefeu"]
+texture = ExtResource("5_tbgi4")
+texture_region_size = Vector2i(36, 32)
+1:4/0 = 0
+6:4/0 = 0
+7:4/0 = 0
+8:4/0 = 0
+
 [sub_resource type="TileSet" id="TileSet_efxa6"]
 physics_layer_0/collision_layer = 1
 physics_layer_0/collision_mask = 2
 sources/0 = SubResource("TileSetAtlasSource_5vw27")
 sources/1 = SubResource("TileSetAtlasSource_kek77")
 sources/2 = SubResource("TileSetAtlasSource_4c57u")
+sources/3 = SubResource("TileSetAtlasSource_tefeu")
 
 [sub_resource type="GDScript" id="GDScript_dg77c"]
 script/source = "extends TileMapLayer

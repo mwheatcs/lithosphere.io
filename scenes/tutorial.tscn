@@ -1,0 +1,61 @@
+[gd_scene load_steps=2 format=3 uid="uid://b772bp0k4lgbf"]
+
+[ext_resource type="Script" uid="uid://ca6p4sgk8g6y0" path="res://scenes/tutorial.gd" id="1_c13y7"]
+
+[node name="Tutorial" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_c13y7")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 51
+
+[node name="Panel" type="Panel" parent="CanvasLayer"]
+unique_name_in_owner = true
+offset_left = 152.0
+offset_top = 8.0
+offset_right = 552.0
+offset_bottom = 144.0
+
+[node name="Label1" type="Label" parent="CanvasLayer/Panel"]
+layout_mode = 0
+offset_left = 8.0
+offset_right = 314.0
+offset_bottom = 75.0
+text = "Welcome to the Lithosphere!
+Your mission is to gather resources, process them
+and sell them and make as much money as posible.
+Use WASD to move the camera."
+
+[node name="Label2" type="Label" parent="CanvasLayer/Panel"]
+visible = false
+layout_mode = 0
+offset_left = 8.0
+offset_right = 392.0
+offset_bottom = 104.0
+text = "You click and drag to select your worker.
+Once selected right click on a node to get them to 
+mine it.
+"
+
+[node name="Label3" type="Label" parent="CanvasLayer/Panel"]
+visible = false
+layout_mode = 0
+offset_left = 8.0
+offset_right = 392.0
+offset_bottom = 104.0
+text = "You can sell your ores on the top right, 
+when you have  enough money you can buy
+factories to process the ores into ingots.
+They are more valuable and sell for more
+"
+
+[node name="Button" type="Button" parent="CanvasLayer/Panel"]
+layout_mode = 0
+offset_left = 184.0
+offset_top = 104.0
+offset_right = 215.0
+offset_bottom = 135.0
+text = "OK"
+
+[connection signal="pressed" from="CanvasLayer/Panel/Button" to="." method="_on_button_pressed"]
