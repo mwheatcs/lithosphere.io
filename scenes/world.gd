@@ -155,7 +155,7 @@ func _command_selected_units(target_position):
 # Calculate positions in a formation around a target point
 func _calculate_formation_positions(center_position, unit_count):
 	var positions = []
-	var spacing = 30.0  # Base spacing between units
+	var spacing = 40.0  # Increased spacing between units to prevent collisions
 	
 	# For a single unit, just use the target position
 	if unit_count == 1:

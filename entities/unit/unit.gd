@@ -4,6 +4,10 @@ extends CharacterBody2D
 @export var rotation_speed := 8.0  # How fast the unit rotates to face direction
 @export var rotation_threshold := 0.1  # How closely unit must face the direction before moving
 @export var visibility_radius := 200.0  # How far this unit can see (for fog of war)
+@export var obstacle_avoidance_range := 50.0  # How far to look for obstacles
+@export var unit_buffer_distance := 30.0  # Minimum distance to maintain from other units
+@export var avoidance_weight := 0.6  # How strongly avoidance affects steering
+
 var selected := false
 var target := Vector2.ZERO
 var has_target := false
@@ -11,6 +15,9 @@ var is_turning := false  # Track if we're still turning to face target
 
 # Visual indicator for selection
 var selection_indicator
+
+# Add avoidance-related properties
+var avoidance_vector := Vector2.ZERO  # Current avoidance direction
 
 func _ready():
 	# Create a selection indicator (circle around unit when selected)
@@ -32,15 +39,22 @@ func _process(delta):
 			has_target = false
 			is_turning = false
 			return
+		
+		# Calculate avoidance vectors before movement
+		avoidance_vector = calculate_avoidance()
+		
+		# Blend direction with avoidance
+		var desired_direction = direction
+		if avoidance_vector.length() > 0.01:
+			desired_direction = (direction + avoidance_vector * avoidance_weight).normalized()
 			
 		# Calculate the angle the unit should face
-		# Add PI/2 (90 degrees) so that the initial down direction is "forward"
-		var target_angle = direction.angle() + PI/2
+		var target_angle = desired_direction.angle() + PI/2
 		
 		# Smoothly rotate toward the target angle
 		var angle_diff = wrapf(target_angle - rotation, -PI, PI)
 		
-		if abs(angle_diff) > 0.01:  # Small threshold to prevent jitter
+		if abs(angle_diff) > 0.01:
 			rotation += angle_diff * min(rotation_speed * delta, 1.0)
 			is_turning = abs(angle_diff) > rotation_threshold
 		else:
@@ -48,7 +62,7 @@ func _process(delta):
 		
 		# Only move if we're properly facing the direction
 		if not is_turning:
-			velocity = direction * speed
+			velocity = desired_direction * speed  # Use the blended direction
 			move_and_slide()
 		else:
 			# Stop moving while turning
@@ -58,6 +72,53 @@ func _process(delta):
 	if (has_target and selected) or is_turning:
 		queue_redraw()
 
+# Calculate avoidance vector from nearby obstacles and units
+func calculate_avoidance() -> Vector2:
+	var avoidance = Vector2.ZERO
+	var space_state = get_world_2d().direct_space_state
+	
+	# Parameters for raycasting to find obstacles
+	var query_params = PhysicsRayQueryParameters2D.new()
+	query_params.from = global_position
+	query_params.exclude = [self]  # Don't detect self
+	
+	# Check in 8 directions for obstacles
+	for angle in range(0, 360, 45):
+		var direction = Vector2.RIGHT.rotated(deg_to_rad(angle))
+		query_params.to = global_position + direction * obstacle_avoidance_range
+		
+		# Cast the ray
+		var result = space_state.intersect_ray(query_params)
+		if result:
+			var distance = global_position.distance_to(result.position)
+			
+			# Calculate avoidance strength - stronger when closer
+			var avoidance_strength = 1.0 - min(distance / obstacle_avoidance_range, 1.0)
+			
+			# Add avoidance in opposite direction of hit
+			avoidance -= direction * avoidance_strength * avoidance_strength  # Square for stronger close avoidance
+	
+	# Specifically check for nearby units for extra avoidance
+	var units = get_tree().get_nodes_in_group("units")
+	for unit in units:
+		if unit == self:
+			continue  # Skip self
+		
+		var distance = global_position.distance_to(unit.global_position)
+		if distance < unit_buffer_distance:
+			# Calculate direction away from other unit
+			var away_dir = (global_position - unit.global_position).normalized()
+			
+			# Stronger avoidance when closer to other unit
+			var avoidance_strength = (1.0 - distance / unit_buffer_distance) * 1.5  # Higher weight for unit-unit avoidance
+			avoidance += away_dir * avoidance_strength
+	
+	# Normalize the avoidance vector if it's significant
+	if avoidance.length_squared() > 0.01:
+		avoidance = avoidance.normalized()
+	
+	return avoidance
+
 func _draw():
 	# Only draw collision outline when selected
 	if selected:
@@ -66,6 +127,12 @@ func _draw():
 		# Draw a path line showing where unit is going
 		if has_target:
 			draw_path_to_target()
+		
+		# Draw avoidance vector for debugging
+		if avoidance_vector.length_squared() > 0.01:
+			var avoidance_color = Color(1.0, 0.0, 0.0, 0.7)  # Red
+			draw_line(Vector2.ZERO, avoidance_vector * 20.0, avoidance_color, 1.5)
+			draw_circle(avoidance_vector * 20.0, 2.0, avoidance_color)
 		
 		# Only draw selection indicator if we have no external highlight node
 		if not has_node("SelectionHighlight"):
