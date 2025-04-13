@@ -4,7 +4,7 @@
 load_path = "res://.godot/imported/Factory.png-b008d5d592c8491afe7951d75023c3ee.ctex"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q61jv"]
-size = Vector2(50, 20)
+size = Vector2(300, 300)
 
 [node name="Factory" type="StaticBody2D"]
 
@@ -12,4 +12,5 @@ size = Vector2(50, 20)
 texture = SubResource("CompressedTexture2D_q61jv")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 50)
 shape = SubResource("RectangleShape2D_q61jv")
