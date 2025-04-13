@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bkbu5snew2mj1"]
 
-[ext_resource type="Texture2D" uid="uid://b7vx65thm5yqm" path="res://icon.svg" id="1_2w6fx"]
-[ext_resource type="Script" uid="uid://dlw07215b8i8r" path="res://inventory/inventory_controller.gd" id="2_gqjns"]
-[ext_resource type="Script" uid="uid://boanld6qdjvoa" path="res://inventory/change_inventory.gd" id="3_fwtxo"]
+[ext_resource type="Texture2D" uid="uid://b7vx65thm5yqm" path="res://icon.svg" id="1_wy1qo"]
+[ext_resource type="Script" uid="uid://dlw07215b8i8r" path="res://inventory/inventory_controller.gd" id="2_52sky"]
+[ext_resource type="Script" uid="uid://boanld6qdjvoa" path="res://inventory/change_inventory.gd" id="3_mwlbc"]
 
 [node name="Display" type="Control"]
 layout_mode = 3
@@ -31,7 +31,7 @@ size_flags_vertical = 3
 
 [node name="MoneyIcon" type="TextureButton" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
 layout_mode = 2
-texture_normal = ExtResource("1_2w6fx")
+texture_normal = ExtResource("1_wy1qo")
 
 [node name="MoneyLabel" type="Label" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
 layout_mode = 2
@@ -39,7 +39,7 @@ text = "Money: 0"
 
 [node name="Minerals" type="TextureButton" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
 layout_mode = 2
-texture_normal = ExtResource("1_2w6fx")
+texture_normal = ExtResource("1_wy1qo")
 
 [node name="MineralLabel" type="Label" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
 layout_mode = 2
@@ -53,13 +53,13 @@ size_flags_vertical = 3
 [node name="Inventory" type="ItemList" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
 layout_mode = 2
 size_flags_horizontal = 3
-script = ExtResource("2_gqjns")
-placeholder_icon = ExtResource("1_2w6fx")
+script = ExtResource("2_52sky")
+placeholder_icon = ExtResource("1_wy1qo")
 
 [node name="Sell" type="Button" parent="CanvasLayer/VBoxContainer/CounterDisplay" node_paths=PackedStringArray("inventory")]
 layout_mode = 2
 text = "Sell"
-script = ExtResource("3_fwtxo")
+script = ExtResource("3_mwlbc")
 inventory = NodePath("../Inventory")
 
 [node name="Control" type="Control" parent="CanvasLayer/VBoxContainer"]
