@@ -58,8 +58,8 @@ func _draw():
 
 # Draws a yellow outline around the unit's actual collision polygon
 func draw_collision_outline():
-	var outline_color = Color(1.0, 1.0, 0.0, 1.0)  # Bright yellow
-	var line_thickness = 1.0
+	var outline_color = Color(0, 0, 0, 1.0)  # Bright yellow
+	var line_thickness = 2.0
 	
 	# Get the collision polygon node (assuming it's named "UnitCollisionPolygon" - adjust name as needed)
 	var collision_polygon = get_node("UnitCollisionPolygon")

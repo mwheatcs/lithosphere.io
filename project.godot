@@ -12,7 +12,6 @@ config_version=5
 
 config/name="Lithosphere"
 run/main_scene="uid://cmx8xg0hk8wgg"
-run/main_scene="uid://5t07qsh0b1u3"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -29,7 +28,3 @@ version_control/autoload_on_startup=true
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-
-[layer_names]
-
-2d_physics/layer_1="Background"
