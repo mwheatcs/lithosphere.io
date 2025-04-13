@@ -21,6 +21,9 @@ var resource_nodes := []  # Will store all resource nodes for fog of war visibil
 var fog_state_map := {}  # Tracks the fog state of each cell (0=unexplored, 1=explored, 2=visible)
 
 func _ready():
+	# Add world to a group so it can be found easily
+	add_to_group("world")
+	
 	# Set process_input to true to ensure input events are processed
 	set_process_input(true)
 	# Set process to true to ensure _process is called
@@ -139,9 +142,58 @@ func _deselect_all_units():
 
 # Command selected units to move to the target position
 func _command_selected_units(target_position):
-	for unit in selected_units:
-		if is_instance_valid(unit):  # Check if unit still exists
-			unit.set_target(target_position)
+	# Skip if no units are selected
+	if selected_units.size() == 0:
+		return
+		
+	# Calculate staggered positions around the target
+	var staggered_positions = _calculate_formation_positions(target_position, selected_units.size())
+	
+	# Assign each unit a unique position in the formation
+	for i in range(selected_units.size()):
+		var unit = selected_units[i]
+		if is_instance_valid(unit):
+			unit.set_target(staggered_positions[i])
+
+# Calculate positions in a formation around a target point
+func _calculate_formation_positions(center_position, unit_count):
+	var positions = []
+	var spacing = 40.0  # Increased spacing between units to prevent collisions
+	
+	# For a single unit, just use the target position
+	if unit_count == 1:
+		positions.append(center_position)
+		return positions
+	
+	# For 2-8 units, arrange in a circle formation
+	if unit_count <= 8:
+		var radius = spacing + (unit_count * 5)  # Scale radius with unit count
+		for i in range(unit_count):
+			var angle = (2 * PI / unit_count) * i
+			var offset = Vector2(cos(angle), sin(angle)) * radius
+			positions.append(center_position + offset)
+	# For larger groups, use a grid formation
+	else:
+		var cols = ceil(sqrt(unit_count))
+		var rows = ceil(unit_count / float(cols))
+		
+		# Center the grid on the target position
+		var grid_width = (cols - 1) * spacing
+		var grid_height = (rows - 1) * spacing
+		var start_x = center_position.x - grid_width/2
+		var start_y = center_position.y - grid_height/2
+		
+		# Generate grid positions
+		for i in range(unit_count):
+			var row = floor(i / cols)
+			var col = i % cols
+			var pos = Vector2(
+				start_x + (col * spacing),
+				start_y + (row * spacing)
+			)
+			positions.append(pos)
+			
+	return positions
 
 # Sets up the fog of war system
 func _setup_fog_of_war():
