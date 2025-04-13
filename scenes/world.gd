@@ -9,7 +9,6 @@ var selection_layer: CanvasLayer
 var selection_rect: Control
 
 # Fog of War variables
-var fog_layer: CanvasLayer
 var fog_texture: ImageTexture
 var fog_image: Image
 var fog_sprite: Sprite2D
@@ -199,11 +198,6 @@ func _calculate_formation_positions(center_position, unit_count):
 
 # Sets up the fog of war system
 func _setup_fog_of_war():
-	# Create a dedicated layer for fog of war
-	fog_layer = CanvasLayer.new()
-	fog_layer.layer = 50  # Below selection rectangle (100) but above game world
-	add_child(fog_layer)
-	
 	# Calculate fog dimensions based on map size
 	var fog_width := int(map_size.x / fog_cell_size) + 1
 	var fog_height := int(map_size.y / fog_cell_size) + 1
@@ -223,7 +217,8 @@ func _setup_fog_of_war():
 	fog_sprite.centered = false
 	fog_sprite.scale = Vector2(fog_cell_size, fog_cell_size)
 	fog_sprite.position = Vector2.ZERO
-	fog_layer.add_child(fog_sprite)
+	fog_sprite.z_index = 50  # High enough to be above terrain but below UI
+	add_child(fog_sprite)  # Add directly to world, not to a CanvasLayer
 	
 	# Initialize all cells as unexplored (fog_state = 0)
 	for y in range(fog_image.get_height()):
@@ -264,29 +259,61 @@ func _update_fog_of_war():
 	# Get all units and update visibility around them
 	var units = get_tree().get_nodes_in_group("units")
 	
+	# World scale factor - needed for proper position conversion
+	var world_scale = scale
+	
 	# For each unit, reveal the fog around it
 	for unit in units:
 		# Set visibility radius based on unit properties
-		var vision_radius = 5  # Default in fog cells
+		var vision_radius_pixels = 200.0  # Default in pixels
 		if unit.get("visibility_radius"):
-			vision_radius = unit.visibility_radius / fog_cell_size
+			vision_radius_pixels = unit.visibility_radius
 		
-		# Convert unit position to fog grid coordinates
-		var fog_pos = Vector2i(
-			int(unit.global_position.x / fog_cell_size),
-			int(unit.global_position.y / fog_cell_size)
+		# Convert vision radius from pixels to fog grid cells
+		var vision_radius = vision_radius_pixels / fog_cell_size
+
+		# Fine-tuned offset for better centering
+		var x_offset = -5
+		var y_offset = -5
+		
+		# Keep the unit position as floating point for precise calculations
+		# Divide by world scale to compensate for the World node's scaling
+		var fog_pos_exact = Vector2(
+			(unit.global_position.x / world_scale.x + x_offset) / fog_cell_size,
+			(unit.global_position.y / world_scale.y + y_offset) / fog_cell_size
 		)
 		
+		# Calculate the integer grid position (for area checking)
+		var fog_pos = Vector2i(int(fog_pos_exact.x), int(fog_pos_exact.y))
+		
+		 # Debug output for first unit to help with alignment
+		if OS.is_debug_build() and units.size() > 0 and unit == units[0]:
+			print("Unit position: ", unit.global_position)
+			print("World scale: ", world_scale)
+			print("Adjusted fog position: ", fog_pos_exact)
+		
+		# Calculate the area to check with a margin to ensure we don't miss edge cells
+		var radius_ceil = ceil(vision_radius) + 1
+
+
+		var min_x = int(fog_pos_exact.x - radius_ceil)
+		var max_x = int(fog_pos_exact.x + radius_ceil) 
+		var min_y = int(fog_pos_exact.y - radius_ceil) 
+		var max_y = int(fog_pos_exact.y + radius_ceil) 
+		
 		# Clear fog around the unit (make it visible)
-		for y in range(-vision_radius, vision_radius + 1):
-			for x in range(-vision_radius, vision_radius + 1):
-				var check_pos = fog_pos + Vector2i(x, y)
+		for y in range(min_y, max_y + 1):
+			for x in range(min_x, max_x + 1):
+				var check_pos = Vector2i(x, y)
 				
 				# Check if position is within image bounds
 				if check_pos.x >= 0 and check_pos.x < updated_fog.get_width() and \
 				   check_pos.y >= 0 and check_pos.y < updated_fog.get_height():
-					# Check if position is within vision radius (circular visibility)
-					var distance = Vector2(x, y).length()
+					 # Calculate distance from fog cell center to unit position for precise circle
+					var cell_center = Vector2(check_pos.x + 0.5, check_pos.y + 0.5)
+					var distance = cell_center.distance_to(fog_pos_exact)
+					
+					# Check if cell is within vision radius (circular visibility)
 					if distance <= vision_radius:
 						# Mark this cell as visible in this frame
 						updated_fog.set_pixel(check_pos.x, check_pos.y, fog_visible_color)
@@ -301,9 +328,10 @@ func _update_fog_of_war():
 		if not (resource.get("visible_behind_fog") and resource.visible_behind_fog):
 			continue
 			
+		# Apply the same scale correction to resources
 		var resource_pos = Vector2i(
-			int(resource.global_position.x / fog_cell_size),
-			int(resource.global_position.y / fog_cell_size)
+			int((resource.global_position.x / scale.x) / fog_cell_size),
+			int((resource.global_position.y / scale.y) / fog_cell_size)
 		)
 		
 		# Only make resources visible in explored areas, not in unexplored black fog
