@@ -1,6 +1,7 @@
 extends Node2D
 
 var drag_start_position = Vector2.ZERO
+var drag_start_screen_position = Vector2.ZERO
 var is_dragging = false
 var selected_units = []
 var min_drag_distance = 5.0
@@ -63,6 +64,7 @@ func _input(event):
 			if event.pressed:
 				# Start dragging
 				drag_start_position = get_global_mouse_position()
+				drag_start_screen_position = get_viewport().get_mouse_position()
 				is_dragging = true
 				print("Started dragging at: ", drag_start_position)
 				
@@ -88,15 +90,15 @@ func _input(event):
 func _on_selection_rect_draw():
 	# Only draw if currently dragging, otherwise leave blank
 	if is_dragging:
-		# Convert global mouse position to canvas coordinates
-		var current_mouse_position = get_global_mouse_position()
+			# Use screen coordinates for drawing the selection rectangle
+		var current_screen_position = get_viewport().get_mouse_position()
 		
 		# Create selection rectangle in screen coordinates
 		var rect = Rect2(
-			min(drag_start_position.x, current_mouse_position.x),
-			min(drag_start_position.y, current_mouse_position.y),
-			abs(current_mouse_position.x - drag_start_position.x),
-			abs(current_mouse_position.y - drag_start_position.y)
+			min(drag_start_screen_position.x, current_screen_position.x),
+			min(drag_start_screen_position.y, current_screen_position.y),
+			abs(current_screen_position.x - drag_start_screen_position.x),
+			abs(current_screen_position.y - drag_start_screen_position.y)
 		)
 		
 		# Draw the selection rectangle
@@ -109,7 +111,7 @@ func _on_selection_rect_draw():
 
 # Select all units within the given rectangle
 func _select_units_in_rectangle(start_position, end_position):
-	# Create a Rect2 from the start and end positions
+	# Create a Rect2 from the start and end positions in world coordinates
 	var rect = Rect2(
 		min(start_position.x, end_position.x),
 		min(start_position.y, end_position.y),
