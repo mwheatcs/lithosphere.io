@@ -14,6 +14,10 @@ config/name="Lithosphere"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[layer_names]
+
+2d_physics/layer_1="Background"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
