@@ -1,6 +1,8 @@
 extends Node2D
 
 @onready var minerals: TileMapLayer = $Minerals
+@onready var world_manager = get_node("/root/World")
+
 
 const MAP_WIDTH = 69
 const MAP_HEIGHT = 37
@@ -14,6 +16,9 @@ const ORE3_DEPLETED_POS = Vector2i(6,16)
 const ORE4_POS = Vector2i(4,17)
 const ORE4_DEPLETED_POS = Vector2i(6,17)
 const STONE_POS = Vector2i(17,13)
+
+const MINING_RANGE = 50.0
+const CELL_SIZE = Vector2(16, 16) 
 
 func _ready() -> void:
 	for i in range(20):
@@ -54,15 +59,34 @@ func _input(event: InputEvent) -> void:
 		var source_id = minerals.get_cell_source_id(tile_coords)
 		var atlas_coords = minerals.get_cell_atlas_coords(tile_coords)
 
-		# If it's the "fresh" ore tile, replace it with "depleted"
-		if source_id == ORES_ID and atlas_coords == ORE1_POS:
-			minerals.set_cell(tile_coords, ORES_ID, ORE1_DEPLETED_POS)
-		if source_id == ORES_ID and atlas_coords == ORE2_POS:
-			minerals.set_cell(tile_coords, ORES_ID, ORE2_DEPLETED_POS)
-		if source_id == ORES_ID and atlas_coords == ORE3_POS:
-			minerals.set_cell(tile_coords, ORES_ID, ORE3_DEPLETED_POS)
-		if source_id == ORES_ID and atlas_coords == ORE4_POS:
-			minerals.set_cell(tile_coords, ORES_ID, ORE4_DEPLETED_POS)
+		if source_id == ORES_ID:
+		# Check if any selected unit is close enough to mine the ore
+			if can_any_selected_unit_mine(tile_coords):
+				# Replace the tile with its depleted version, depending on which ore it is
+				if atlas_coords == ORE1_POS:
+					minerals.set_cell(tile_coords, ORES_ID, ORE1_DEPLETED_POS)
+				elif atlas_coords == ORE2_POS:
+					minerals.set_cell(tile_coords, ORES_ID, ORE2_DEPLETED_POS)
+				elif atlas_coords == ORE3_POS:
+					minerals.set_cell(tile_coords, ORES_ID, ORE3_DEPLETED_POS)
+				elif atlas_coords == ORE4_POS:
+					minerals.set_cell(tile_coords, ORES_ID, ORE4_DEPLETED_POS)
+			else:
+				print("No selected unit is close enough to mine this ore.")
+
+func can_any_selected_unit_mine(tile_coords: Vector2i) -> bool:
+	# Calculate the world position of the tile's center:
+	# (tile_coords * CELL_SIZE) gives the tile's top-left local position within the layer.
+	# minerals.global_position offsets that to world space.
+	# Adding half the CELL_SIZE gets us the center of the tile.
+	var tile_world_pos = minerals.global_position + (Vector2(tile_coords) * CELL_SIZE) + (CELL_SIZE * 0.5)
+
+	# Loop through each selected unit from the selection manager (world node)
+	for unit in world_manager.selected_units:
+		if unit.global_position.distance_to(tile_world_pos) <= MINING_RANGE:
+			return true
+	return false
+
 
 
 @warning_ignore("unused_parameter")
