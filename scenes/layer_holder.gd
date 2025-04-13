@@ -1,14 +1,13 @@
 extends Node2D
 
 @onready var minerals: TileMapLayer = $Minerals
+
 @onready var world_manager = get_tree().get_current_scene()
 
 const MAP_WIDTH = 69
 const MAP_HEIGHT = 37
 const ORES_ID = 2
 const CELL_SIZE = Vector2(16, 16)  # adjust to your actual tile size
-
-
 const ORE1_POS = Vector2i(4,14)
 const ORE1_DEPLETED_POS = Vector2i(6,14)
 const ORE2_POS = Vector2i(4,15)
@@ -18,8 +17,8 @@ const ORE3_DEPLETED_POS = Vector2i(6,16)
 const ORE4_POS = Vector2i(4,17)
 const ORE4_DEPLETED_POS = Vector2i(6,17)
 const STONE_POS = Vector2i(17,13)
-
 const MINING_RANGE = 50.0
+
 
 func _ready() -> void:
 	for i in range(20):
@@ -59,6 +58,7 @@ func _input(event: InputEvent) -> void:
 		# Get the existing tile info at that cell
 		var source_id = minerals.get_cell_source_id(tile_coords)
 		var atlas_coords = minerals.get_cell_atlas_coords(tile_coords)
+
 
 # If this tile is part of our ore set...
 		if source_id == ORES_ID:
