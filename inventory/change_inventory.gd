@@ -11,12 +11,10 @@ func display_sell_price():
 	var item_index_array = inventory.get_selected_items()
 	if item_index_array.size() > 0:
 		curr_item_index = inventory.get_selected_items()[0];
-	else:
-		curr_item_index = -1
-	if curr_item_index != -1:
 		sell_price = inventory.get_item(curr_item_index).get_sell_price()
 		text = "Sell for " + str(sell_price)
 	else:
+		curr_item_index = -1
 		hide()
 		sell_price = 0
 
