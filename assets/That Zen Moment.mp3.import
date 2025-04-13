@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://d0ehakeu13v1e"
+path="res://.godot/imported/That Zen Moment.mp3-95f9fe771b043b9d81ff7849961c3a89.mp3str"
+
+[deps]
+
+source_file="res://assets/That Zen Moment.mp3"
+dest_files=["res://.godot/imported/That Zen Moment.mp3-95f9fe771b043b9d81ff7849961c3a89.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

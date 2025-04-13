@@ -949,7 +949,7 @@ texture = ExtResource("4_272bh")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tefeu"]
 texture = ExtResource("5_tbgi4")
-texture_region_size = Vector2i(36, 32)
+texture_region_size = Vector2i(32, 32)
 1:4/0 = 0
 6:4/0 = 0
 7:4/0 = 0
