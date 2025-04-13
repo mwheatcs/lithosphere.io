@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://cmx8xg0hk8wgg"]
+[gd_scene load_steps=7 format=3 uid="uid://cmx8xg0hk8wgg"]
 
 [ext_resource type="Script" uid="uid://dq24ox88mlmqu" path="res://scenes/world.gd" id="1_7g83o"]
 [ext_resource type="PackedScene" uid="uid://bkbu5snew2mj1" path="res://scenes/display.tscn" id="2_1lgw5"]
 [ext_resource type="PackedScene" uid="uid://vb12gyg0t26t" path="res://scenes/main.tscn" id="2_d1c63"]
 [ext_resource type="PackedScene" uid="uid://de0ltw7ve4uvi" path="res://entities/unit/Unit.tscn" id="3_1lgw5"]
 [ext_resource type="PackedScene" uid="uid://dc00wgkhbn8ph" path="res://entities/Buildings/Buildings.tscn" id="5_1lgw5"]
+[ext_resource type="Script" uid="uid://k0grxrnv5u7y" path="res://scenes/camera_2d.gd" id="6_hlk0d"]
 
 [node name="World" type="Node2D"]
 scale = Vector2(2, 2)
@@ -27,5 +28,9 @@ position = Vector2(215, 325)
 [node name="Display" parent="." instance=ExtResource("2_1lgw5")]
 
 [node name="Buildings" parent="." instance=ExtResource("5_1lgw5")]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2(350, 350)
+script = ExtResource("6_hlk0d")
 
 [connection signal="buy_factory" from="Display" to="Buildings" method="_on_display_buy_factory"]
