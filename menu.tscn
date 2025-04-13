@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://eng8i4jnwte4"]
+[gd_scene load_steps=2 format=3 uid="uid://eng8i4jnwte4"]
+
+[ext_resource type="Script" uid="uid://dvvokvri53uca" path="res://control_2.gd" id="1_lti8b"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -42,3 +44,7 @@ size_flags_vertical = 3
 [node name="Control2" type="Control" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+script = ExtResource("1_lti8b")
+
+[node name="Window" type="Window" parent="HBoxContainer/Control2"]
+position = Vector2i(0, 36)
