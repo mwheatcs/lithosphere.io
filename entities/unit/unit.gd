@@ -1,9 +1,13 @@
 extends CharacterBody2D
 
 @export var speed := 100.0
+@export var rotation_speed := 8.0  # How fast the unit rotates to face direction
+@export var rotation_threshold := 0.1  # How closely unit must face the direction before moving
+@export var visibility_radius := 200.0  # How far this unit can see (for fog of war)
 var selected := false
 var target := Vector2.ZERO
 var has_target := false
+var is_turning := false  # Track if we're still turning to face target
 
 # Visual indicator for selection
 var selection_indicator
@@ -19,60 +23,100 @@ func _ready():
 	add_to_group("units")
 
 func _process(delta):
-	# Only move if we have a target
+	# Only process if we have a target
 	if has_target:
 		var direction = (target - global_position).normalized()
 		
 		# Check if we've reached the target (within a small threshold)
 		if global_position.distance_to(target) < 5.0:
 			has_target = false
+			is_turning = false
+			return
+			
+		# Calculate the angle the unit should face
+		# Add PI/2 (90 degrees) so that the initial down direction is "forward"
+		var target_angle = direction.angle() + PI/2
+		
+		# Smoothly rotate toward the target angle
+		var angle_diff = wrapf(target_angle - rotation, -PI, PI)
+		
+		if abs(angle_diff) > 0.01:  # Small threshold to prevent jitter
+			rotation += angle_diff * min(rotation_speed * delta, 1.0)
+			is_turning = abs(angle_diff) > rotation_threshold
 		else:
+			is_turning = false
+		
+		# Only move if we're properly facing the direction
+		if not is_turning:
 			velocity = direction * speed
 			move_and_slide()
+		else:
+			# Stop moving while turning
+			velocity = Vector2.ZERO
 	
+	# Force redraw when path changes or when turning
+	if (has_target and selected) or is_turning:
+		queue_redraw()
+
 func _draw():
 	# Only draw collision outline when selected
 	if selected:
 		draw_collision_outline()
+		
+		# Draw a path line showing where unit is going
+		if has_target:
+			draw_path_to_target()
 		
 		# Only draw selection indicator if we have no external highlight node
 		if not has_node("SelectionHighlight"):
 			# Get the appropriate size for the highlight based on the sprite
 			var size = get_appropriate_highlight_size()
 			
-			# Draw a diamond-shaped selection indicator instead of an arc
-			var diamond_points = [
-				Vector2(0, -size),   # Top
-				Vector2(size, 0),    # Right
-				Vector2(0, size),    # Bottom
-				Vector2(-size, 0)    # Left
-			]
-			# Draw diamond outline
-			for i in range(diamond_points.size()):
-				draw_line(
-					diamond_points[i], 
-					diamond_points[(i + 1) % diamond_points.size()], 
-					Color(0.9, 0.9, 0.2, 0.7), 
-					1.5
-				)
 
-# Draws a yellow outline around the unit's actual collision polygon
+# Draws an outline around the unit's actual collision polygon, respecting transforms
 func draw_collision_outline():
-	var outline_color = Color(0, 0, 0, 1.0)  # Bright yellow
+	var outline_color = Color(0, 0, 1, 1)
 	var line_thickness = 2.0
 	
-	# Get the collision polygon node (assuming it's named "UnitCollisionPolygon" - adjust name as needed)
-	var collision_polygon = get_node("UnitCollisionPolygon")
+	# Get the collision polygon node
+	var collision_polygon = get_node("CollisionPolygon2D")
 	
 	# Check if it exists and has valid polygon data
 	if collision_polygon and collision_polygon is CollisionPolygon2D and not collision_polygon.polygon.is_empty():
 		var points = collision_polygon.polygon
 		
-		# Draw the actual collision outline without scaling
+		 # Since _draw is in local coordinates, we need to convert from global to local
+		# Get the global transform of the CollisionPolygon2D and our local transform
+		var polygon_global_transform = collision_polygon.get_global_transform()
+		var local_transform = get_global_transform().affine_inverse()
+		
+		# Draw the collision outline with proper transform handling
 		for i in range(points.size()):
-			var start = points[i]
-			var end = points[(i + 1) % points.size()]  # Wrap around to first point
-			draw_line(start, end, outline_color, line_thickness)
+			# Convert points to global space then back to our local drawing space
+			var global_start = polygon_global_transform * points[i]
+			var global_end = polygon_global_transform * points[(i + 1) % points.size()]
+			
+			# Convert global points to our local space for drawing
+			var start_pos = local_transform * global_start
+			var end_pos = local_transform * global_end
+			
+			draw_line(start_pos, end_pos, outline_color, line_thickness)
+
+# Draws a green line showing unit's path to target
+func draw_path_to_target():
+	if has_target:
+		var line_color = Color(0.0, 0.8, 0.0, 0.8)  # Bright green with slight transparency
+		var line_thickness = 1.5
+		
+		# Convert target from global to local coordinates
+		var target_local = to_local(target)
+		
+		# Draw line from unit to target
+		draw_line(Vector2.ZERO, target_local, line_color, line_thickness)
+		
+		# Draw a small circle at the target location
+		var target_radius = 3.0
+		draw_circle(target_local, target_radius, Color(0.0, 1.0, 0.0, 1.0))
 
 # Helper function to get the appropriate highlight size based on sprite or collision shape
 func get_appropriate_highlight_size():
@@ -131,3 +175,5 @@ func unselect():
 func set_target(pos):
 	target = pos
 	has_target = true
+	is_turning = true  # Start by turning to face target
+	queue_redraw()  # Force redraw to show the path line
