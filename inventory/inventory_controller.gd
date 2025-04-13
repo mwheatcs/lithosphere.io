@@ -11,9 +11,10 @@ var items: Array = [];
 func update_stats_ui(change_money: int) -> void:
 	stats.get_child(0).change_count(change_money)
 	stats.get_child(1).set_count(items.size())
-	
+
 
 func _ready() -> void:
+	# TODO remove placeholders
 	for i in range(1, inventory_size+1):
 		add_item(str(i), placeholder_icon)
 		var temp_item = Item.new()
