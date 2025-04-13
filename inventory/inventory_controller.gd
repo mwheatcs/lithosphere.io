@@ -21,7 +21,7 @@ func update_stats_ui(change_money: int) -> void:
 
 
 func _ready() -> void:
-	# TODO remove placeholders
+	# TODO remove placeholders and add diff mineral item types
 	for i in range(1, inventory_size+1):
 		add_item(str(i), placeholder_icon)
 		var temp_item = Item.new()

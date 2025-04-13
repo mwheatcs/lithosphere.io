@@ -1,6 +1,28 @@
-[gd_scene load_steps=2 format=3 uid="uid://dsuhx0qtb8rg0"]
+[gd_scene load_steps=6 format=3 uid="uid://dsuhx0qtb8rg0"]
 
 [ext_resource type="Script" uid="uid://8okma4e0wgoq" path="res://scenes/start_menu.gd" id="1_con2f"]
+[ext_resource type="Texture2D" uid="uid://c57g7nfasb4l7" path="res://assets/SpaceBackground.png" id="2_vjb58"]
+[ext_resource type="Script" uid="uid://d3vetptoigdse" path="res://scenes/zoom.gd" id="3_con2f"]
+
+[sub_resource type="Animation" id="Animation_vjb58"]
+resource_name = "zoom"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 0,
+"values": []
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_con2f"]
+_data = {
+&"zoom": SubResource("Animation_vjb58")
+}
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -10,6 +32,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_con2f")
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_left = -1395.0
+offset_top = -781.0
+offset_right = 1165.0
+offset_bottom = 659.0
+texture = ExtResource("2_vjb58")
+script = ExtResource("3_con2f")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -45,6 +77,11 @@ size_flags_vertical = 3
 [node name="Control2" type="Control" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_con2f")
+}
 
 [connection signal="pressed" from="HBoxContainer/VBoxContainer/Start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="HBoxContainer/VBoxContainer/Start" to="HBoxContainer/VBoxContainer/Start" method="_on_pressed"]
