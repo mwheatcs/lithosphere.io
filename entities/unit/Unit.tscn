@@ -5,6 +5,7 @@
 
 [node name="Unit" type="CharacterBody2D"]
 script = ExtResource("1_tpmg0")
+visibility_radius = 2000.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.02, 0.02)
