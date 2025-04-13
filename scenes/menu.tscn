@@ -1,4 +1,7 @@
-[gd_scene format=3 uid="uid://eng8i4jnwte4"]
+[gd_scene load_steps=3 format=3 uid="uid://dsuhx0qtb8rg0"]
+
+[ext_resource type="Script" uid="uid://bh5lxqy6adfbg" path="res://scenes/scene_changer.gd" id="1_yqeox"]
+[ext_resource type="Script" uid="uid://dqyqyqa6dkbop" path="res://scenes/exit.gd" id="2_vjb58"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -30,10 +33,12 @@ size_flags_vertical = 3
 [node name="Start" type="Button" parent="HBoxContainer/VBoxContainer"]
 layout_mode = 2
 text = "Launch"
+script = ExtResource("1_yqeox")
 
 [node name="Exit" type="Button" parent="HBoxContainer/VBoxContainer"]
 layout_mode = 2
 text = "Eject"
+script = ExtResource("2_vjb58")
 
 [node name="Control2" type="Control" parent="HBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -43,5 +48,5 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Window" type="Window" parent="HBoxContainer/Control2"]
-position = Vector2i(0, 36)
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/Start" to="HBoxContainer/VBoxContainer/Start" method="_on_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/Exit" to="HBoxContainer/VBoxContainer/Exit" method="_on_pressed"]

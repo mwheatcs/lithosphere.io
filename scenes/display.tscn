@@ -1,0 +1,100 @@
+[gd_scene load_steps=4 format=3 uid="uid://bkbu5snew2mj1"]
+
+[ext_resource type="Texture2D" uid="uid://b7vx65thm5yqm" path="res://icon.svg" id="1_wy1qo"]
+[ext_resource type="Script" uid="uid://dlw07215b8i8r" path="res://inventory/inventory_controller.gd" id="2_52sky"]
+[ext_resource type="Script" uid="uid://boanld6qdjvoa" path="res://inventory/change_inventory.gd" id="3_mwlbc"]
+
+[node name="Display" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CounterDisplay" type="HBoxContainer" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MoneyIcon" type="TextureButton" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
+layout_mode = 2
+texture_normal = ExtResource("1_wy1qo")
+
+[node name="MoneyLabel" type="Label" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
+layout_mode = 2
+text = "Money: 0"
+
+[node name="Minerals" type="TextureButton" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
+layout_mode = 2
+texture_normal = ExtResource("1_wy1qo")
+
+[node name="MineralLabel" type="Label" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
+layout_mode = 2
+text = "Minerals: 0"
+
+[node name="Control4" type="Control" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Inventory" type="ItemList" parent="CanvasLayer/VBoxContainer/CounterDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_52sky")
+placeholder_icon = ExtResource("1_wy1qo")
+
+[node name="Sell" type="Button" parent="CanvasLayer/VBoxContainer/CounterDisplay" node_paths=PackedStringArray("inventory")]
+layout_mode = 2
+text = "Sell"
+script = ExtResource("3_mwlbc")
+inventory = NodePath("../Inventory")
+
+[node name="Control" type="Control" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Control2" type="Control" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Control3" type="Control" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Control4" type="Control" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Control5" type="Control" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Control6" type="Control" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Control7" type="Control" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Control8" type="Control" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[connection signal="focus_exited" from="CanvasLayer/VBoxContainer/CounterDisplay/Inventory" to="CanvasLayer/VBoxContainer/CounterDisplay/Sell" method="_on_inventory_focus_exited"]
+[connection signal="item_clicked" from="CanvasLayer/VBoxContainer/CounterDisplay/Inventory" to="CanvasLayer/VBoxContainer/CounterDisplay/Sell" method="_on_inventory_item_clicked"]
+[connection signal="item_selected" from="CanvasLayer/VBoxContainer/CounterDisplay/Inventory" to="CanvasLayer/VBoxContainer/CounterDisplay/Sell" method="_on_inventory_item_selected"]
+[connection signal="pressed" from="CanvasLayer/VBoxContainer/CounterDisplay/Sell" to="CanvasLayer/VBoxContainer/CounterDisplay/Sell" method="_on_pressed"]
