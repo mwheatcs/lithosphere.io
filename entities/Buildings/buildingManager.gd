@@ -40,3 +40,30 @@ func _on_display_buy_factory() -> void:
 		print("Placement mode enabled. Click to place factory.")
 	else:
 		print("Not enough money to buy a factory!")
+		_show_no_money_message()
+		
+		
+func _show_no_money_message() -> void:
+	# Create a Label node to display the message
+	var msg = Label.new()
+	msg.text = "Not enough money to buy a factory!"
+	# Position it where you want in screen coordinates
+	# Here we position it relative to the UI; adjust as needed.
+	msg.anchor_left = 0.5
+	msg.anchor_top = 0.1
+	msg.anchor_right = 0.5
+	msg.anchor_bottom = 0.1
+	msg.position = Vector2(-150, 0)  # Offset from the anchor (left)
+	msg.custom_minimum_size = Vector2(300, 30)
+
+	# Add it to a CanvasLayer that is always on top, or to the UI node
+	var ui_layer = get_node("/root/World/Display/CanvasLayer")
+	ui_layer.add_child(msg)
+	
+	# Create a Timer node to remove the message after 2 seconds.
+	var timer = Timer.new()
+	timer.one_shot = true
+	timer.wait_time = 2.0
+	ui_layer.add_child(timer)
+	timer.timeout.connect(msg.queue_free)
+	timer.start()
