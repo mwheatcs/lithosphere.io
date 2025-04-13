@@ -5,6 +5,8 @@ extends ItemList
 @export var placeholder_icon: Texture2D
 @export var stats: Node;
 
+signal update_sell_price
+
 var items: Array = [];
 
 func update_inventory_ui():
@@ -15,7 +17,10 @@ func update_inventory_ui():
 
 func update_stats_ui(change_money: int) -> void:
 	stats.get_child(0).change_count(change_money)
-	stats.get_child(1).set_count(items.size())
+	var total_count = 0
+	for item in items:
+		total_count += item.count
+	stats.get_child(1).set_count(total_count)
 	update_inventory_ui()
 
 
@@ -43,6 +48,7 @@ func add_item_to_inventory(item: Item):
 		items.append(item)
 		add_item(str(item.count), item.icon)
 	
+	update_sell_price.emit()
 	update_stats_ui(0)
 
 
