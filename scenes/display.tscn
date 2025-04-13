@@ -68,6 +68,7 @@ placeholder_icon = ExtResource("1_wy1qo")
 stats = NodePath("../Stats")
 
 [node name="Sell" type="Button" parent="CanvasLayer/VBoxContainer/CounterDisplay" node_paths=PackedStringArray("inventory")]
+visible = false
 layout_mode = 2
 text = "Sell"
 script = ExtResource("3_mwlbc")
