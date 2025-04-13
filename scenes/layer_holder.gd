@@ -2,7 +2,7 @@ extends Node2D
 
 @onready var minerals: TileMapLayer = $Minerals
 @onready var world_manager = get_node("/root/World")
-
+@onready var inventory = get_node("/root/World/Display/CanvasLayer/VBoxContainer/CounterDisplay/Inventory")
 
 const MAP_WIDTH = 69
 const MAP_HEIGHT = 37
@@ -25,6 +25,17 @@ var hovered_mineral_coords: Vector2i = Vector2i(-1, -1)  # Invalid default posit
 var hovered_mineral_pos: Vector2
 var is_mineral_hovered: bool = false
 var highlight = null  # For drawing the highlight
+
+# Ore items
+var ores: Dictionary;
+var ore_coords = [
+		Vector2i(4, 14),  # Ore type 1
+		Vector2i(4, 15),  # Ore type 2
+		Vector2i(4, 16),  # Ore type 3
+		Vector2i(4, 17)   # Ore type 4
+	]
+var tile_size = Vector2(16, 16)  
+var tileset_path = "res://assets/TileSetNature.png"
 
 func _ready() -> void:
 	# Create a node for drawing the mineral highlight
@@ -57,7 +68,9 @@ func _ready() -> void:
 		var rand_x = randi() % MAP_WIDTH + 1
 		var rand_y = randi() % MAP_HEIGHT + 1 
 		minerals.set_cell(Vector2i(rand_x, rand_y), ORES_ID, STONE_POS)
-		
+	
+	# initialize ore items to add to inventory
+	create_ore_types()
 
 # # This function is called on any input event (mouse, keyboard, etc.)
 # func _input(event: InputEvent) -> void:
@@ -195,6 +208,17 @@ func _process(delta: float) -> void:
 	highlight.queue_redraw()
 	pass
 
+# Initialize ore items
+func create_ore_types():
+	for i in range(1, 5):
+		ores[i] = Item.new()
+		ores[i].Name = "Ore Type " + str(i)
+		ores[i].price = i * i
+		
+		var ore_index = (i - 1) % ore_coords.size()
+		var ore_atlas_coords = ore_coords[ore_index]
+		ores[i].icon = Item.get_ore_atlas_texture(ore_atlas_coords, tile_size, tileset_path)
+
 # Deplete a mineral at the given coordinates
 func deplete_mineral(tile_coords: Vector2i) -> void:
 	# Get the existing tile info at that cell
@@ -205,13 +229,21 @@ func deplete_mineral(tile_coords: Vector2i) -> void:
 		# Replace the tile with its depleted version, depending on which ore it is
 		if atlas_coords == ORE1_POS:
 			minerals.set_cell(tile_coords, ORES_ID, ORE1_DEPLETED_POS)
+			ores[1].count = randi_range(4, 6)
+			inventory.add_item_to_inventory(ores[1])
 			print("Ore type 1 depleted at: ", tile_coords)
 		elif atlas_coords == ORE2_POS:
 			minerals.set_cell(tile_coords, ORES_ID, ORE2_DEPLETED_POS)
+			ores[2].count = randi_range(3, 5)
+			inventory.add_item_to_inventory(ores[2])
 			print("Ore type 2 depleted at: ", tile_coords)
 		elif atlas_coords == ORE3_POS:
 			minerals.set_cell(tile_coords, ORES_ID, ORE3_DEPLETED_POS)
+			ores[3].count = randi_range(2, 4)
+			inventory.add_item_to_inventory(ores[3])
 			print("Ore type 3 depleted at: ", tile_coords)
 		elif atlas_coords == ORE4_POS:
 			minerals.set_cell(tile_coords, ORES_ID, ORE4_DEPLETED_POS)
+			ores[4].count = randi_range(1, 3)
+			inventory.add_item_to_inventory(ores[4])
 			print("Ore type 4 depleted at: ", tile_coords)

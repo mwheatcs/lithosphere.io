@@ -58,7 +58,6 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_52sky")
-inventory_size = 4
 placeholder_icon = ExtResource("1_wy1qo")
 stats = NodePath("../Stats")
 
@@ -103,4 +102,5 @@ size_flags_vertical = 3
 [connection signal="focus_exited" from="CanvasLayer/VBoxContainer/CounterDisplay/Inventory" to="CanvasLayer/VBoxContainer/CounterDisplay/Sell" method="_on_inventory_focus_exited"]
 [connection signal="item_clicked" from="CanvasLayer/VBoxContainer/CounterDisplay/Inventory" to="CanvasLayer/VBoxContainer/CounterDisplay/Sell" method="_on_inventory_item_clicked"]
 [connection signal="item_selected" from="CanvasLayer/VBoxContainer/CounterDisplay/Inventory" to="CanvasLayer/VBoxContainer/CounterDisplay/Sell" method="_on_inventory_item_selected"]
+[connection signal="update_sell_price" from="CanvasLayer/VBoxContainer/CounterDisplay/Inventory" to="CanvasLayer/VBoxContainer/CounterDisplay/Sell" method="_on_inventory_update_sell_price"]
 [connection signal="pressed" from="CanvasLayer/VBoxContainer/CounterDisplay/Sell" to="CanvasLayer/VBoxContainer/CounterDisplay/Sell" method="_on_pressed"]

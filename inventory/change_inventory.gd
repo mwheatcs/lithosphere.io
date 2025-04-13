@@ -6,15 +6,25 @@ var default_text: String = "Sell";
 var sell_price: int = 0;
 var curr_item_index: int = -1;
 
-func _on_inventory_item_selected(_index: int) -> void:
+func display_sell_price():
 	show()
-	curr_item_index = inventory.get_selected_items()[0];
+	var item_index_array = inventory.get_selected_items()
+	if item_index_array.size() > 0:
+		curr_item_index = inventory.get_selected_items()[0];
+	else:
+		curr_item_index = -1
 	if curr_item_index != -1:
 		sell_price = inventory.get_item(curr_item_index).get_sell_price()
 		text = "Sell for " + str(sell_price)
 	else:
 		hide()
 		sell_price = 0
+
+func _on_inventory_update_sell_price() -> void:
+	display_sell_price()
+
+func _on_inventory_item_selected(_index: int) -> void:
+	display_sell_price()
 
 func _on_inventory_focus_exited() -> void:
 	inventory.deselect_all()
