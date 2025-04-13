@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=4 uid="uid://vb12gyg0t26t"]
+[gd_scene load_steps=9 format=4 uid="uid://vb12gyg0t26t"]
 
 [ext_resource type="Script" uid="uid://kepeewlgii2l" path="res://layer_holder.gd" id="1_1bvp3"]
 [ext_resource type="Texture2D" uid="uid://cjqtuxwf75751" path="res://assets/TilesetFloor.png" id="2_lquwl"]
@@ -953,10 +953,6 @@ sources/0 = SubResource("TileSetAtlasSource_5vw27")
 sources/1 = SubResource("TileSetAtlasSource_kek77")
 sources/2 = SubResource("TileSetAtlasSource_4c57u")
 
-[sub_resource type="GDScript" id="GDScript_dg77c"]
-script/source = "extends TileMapLayer
-"
-
 [node name="Main" type="Node2D"]
 
 [node name="layerHolder" type="Node2D" parent="."]
@@ -969,4 +965,3 @@ tile_set = SubResource("TileSet_efxa6")
 
 [node name="Minerals" type="TileMapLayer" parent="layerHolder"]
 tile_set = SubResource("TileSet_efxa6")
-script = SubResource("GDScript_dg77c")
