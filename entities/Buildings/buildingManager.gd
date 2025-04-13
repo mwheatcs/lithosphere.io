@@ -3,7 +3,7 @@ var factory_scene : PackedScene = preload("res://entities/Buildings/factory.tscn
 var money : int = 100  # Example starting money
 var is_placing_factory: bool = false
 var factory_preview: Node2D = null   # will hold our preview instance
-
+@onready var money_display = get_node("/root/World/Display/CanvasLayer/VBoxContainer/CounterDisplay/Stats/Money")
 
 func _input(event: InputEvent) -> void:
 	if is_placing_factory:
@@ -27,8 +27,8 @@ func _input(event: InputEvent) -> void:
 
 func _on_display_buy_factory() -> void:
 	var factory_cost = 10
-	if money >= factory_cost:
-		money -= factory_cost
+	if money_display.count >= factory_cost:
+		money_display.change_count(-factory_cost)
 		# Enter placement mode:
 		is_placing_factory = true
 		
