@@ -7,6 +7,7 @@ extends CharacterBody2D
 @export var obstacle_avoidance_range := 50.0  # How far to look for obstacles
 @export var unit_buffer_distance := 30.0  # Minimum distance to maintain from other units
 @export var avoidance_weight := 0.6  # How strongly avoidance affects steering
+@export var mining_time := 1.0  # Time in seconds it takes to harvest a mineral
 
 var selected := false
 var target := Vector2.ZERO
@@ -19,6 +20,13 @@ var selection_indicator
 # Add avoidance-related properties
 var avoidance_vector := Vector2.ZERO  # Current avoidance direction
 
+# Mining related variables
+var is_mining_target := false
+var mining_tile_coords := Vector2i(-1, -1)
+var is_mining := false
+var mining_timer := 0.0
+var mining_progress := 0.0  # 0.0 to 1.0 for visual progress
+
 func _ready():
 	# Create a selection indicator (circle around unit when selected)
 	selection_indicator = Node2D.new()
@@ -30,14 +38,33 @@ func _ready():
 	add_to_group("units")
 
 func _process(delta):
-	# Only process if we have a target
+	# Handle mining state
+	if is_mining:
+		# Update mining timer
+		mining_timer -= delta
+		mining_progress = 1.0 - (mining_timer / mining_time)
+		
+		if mining_timer <= 0.0:
+			# Mining complete
+			complete_mining()
+		
+		# Force redraw to update mining progress indicator
+		queue_redraw()
+		return
+	
+	# Only process if we have a target and not mining
 	if has_target:
 		var direction = (target - global_position).normalized()
 		
 		# Check if we've reached the target (within a small threshold)
 		if global_position.distance_to(target) < 5.0:
-			has_target = false
-			is_turning = false
+			if is_mining_target:
+				# We've reached a mining target - start mining
+				start_mining()
+			else:
+				# Regular movement target reached
+				has_target = false
+				is_turning = false
 			return
 		
 		# Calculate avoidance vectors before movement
@@ -138,7 +165,26 @@ func _draw():
 		if not has_node("SelectionHighlight"):
 			# Get the appropriate size for the highlight based on the sprite
 			var size = get_appropriate_highlight_size()
-			
+	
+	# Draw mining progress indicator if mining
+	if is_mining:
+		var indicator_radius = 20.0
+		var indicator_width = 3.0
+		var start_angle = -PI/2  # Start from top
+		var end_angle = start_angle + (PI * 2 * mining_progress)
+		
+		# Draw progress arc
+		draw_arc(Vector2.ZERO, indicator_radius, start_angle, end_angle, 32, Color.GREEN, indicator_width)
+		
+		# Draw mining indicator text - use simple percentage display without font
+		#var percent = int(mining_progress * 100)
+		
+		# Draw a background for better visibility
+		#draw_circle(Vector2(0, -indicator_radius - 10), 10, Color(0, 0, 0, 0.5))
+		
+		# Without using fonts, we can use colored circles to indicate progress
+		#var progress_color = Color.GREEN
+		#draw_circle(Vector2(0, -indicator_radius - 10), 8 * (mining_progress), progress_color)
 
 # Draws an outline around the unit's actual collision polygon, respecting transforms
 func draw_collision_outline():
@@ -172,7 +218,8 @@ func draw_collision_outline():
 # Draws a green line showing unit's path to target
 func draw_path_to_target():
 	if has_target:
-		var line_color = Color(0.0, 0.8, 0.0, 0.8)  # Bright green with slight transparency
+		# Use yellow for mining targets, green for normal movement
+		var line_color = Color(1.0, 0.9, 0.0, 0.8) if is_mining_target else Color(0.0, 0.8, 0.0, 0.8)
 		var line_thickness = 1.5
 		
 		# Convert target from global to local coordinates
@@ -183,7 +230,25 @@ func draw_path_to_target():
 		
 		# Draw a small circle at the target location
 		var target_radius = 3.0
-		draw_circle(target_local, target_radius, Color(0.0, 1.0, 0.0, 1.0))
+		draw_circle(target_local, target_radius, line_color)
+		
+		# If this is a mining target, draw a small diamond around it
+		if is_mining_target:
+			var size = 6.0
+			var diamond_points = [
+				target_local + Vector2(0, -size),   # Top
+				target_local + Vector2(size, 0),    # Right
+				target_local + Vector2(0, size),    # Bottom
+				target_local + Vector2(-size, 0)    # Left
+			]
+			
+			for i in range(diamond_points.size()):
+				draw_line(
+					diamond_points[i],
+					diamond_points[(i + 1) % diamond_points.size()],
+					Color(1.0, 0.9, 0.0, 0.8),
+					1.0
+				)
 
 # Helper function to get the appropriate highlight size based on sprite or collision shape
 func get_appropriate_highlight_size():
@@ -240,7 +305,71 @@ func unselect():
 
 # Sets a new target location for the unit to move to
 func set_target(pos):
+	# Cancel mining if in progress
+	cancel_mining()
+	
 	target = pos
 	has_target = true
-	is_turning = true  # Start by turning to face target
-	queue_redraw()  # Force redraw to show the path line
+	is_turning = true
+	is_mining_target = false  # Reset mining state for normal movement
+	queue_redraw()
+
+# Sets a mining target location
+func set_mining_target(pos, tile_coords):
+	target = pos
+	has_target = true
+	is_turning = true
+	is_mining_target = true
+	mining_tile_coords = tile_coords
+	queue_redraw()
+
+# Start mining operation
+func start_mining():
+	# Initialize mining state
+	is_mining = true
+	mining_timer = mining_time
+	mining_progress = 0.0
+	
+	# Stop movement
+	velocity = Vector2.ZERO
+	has_target = false
+	is_turning = false
+	
+	print("Started mining at coordinates: ", mining_tile_coords)
+
+# Complete the mining operation
+func complete_mining():
+	# Reset mining state
+	is_mining = false
+	mining_progress = 0.0
+	
+	# Get reference to layer_holder to deplete the resource
+	var layer_holder = get_node_or_null("../Main/layerHolder")
+
+	# If direct path doesn't work, try finding it another way
+	if not layer_holder:
+		var world = get_tree().get_nodes_in_group("world")
+		if world and world.size() > 0:
+			for node in world[0].get_children():
+				if "LayerHolder" in node.name:
+					layer_holder = node
+					break
+	
+	# Deplete the mineral if we found the layer holder
+	if layer_holder and layer_holder.has_method("deplete_mineral"):
+		layer_holder.deplete_mineral(mining_tile_coords)
+		print("Mining completed - Resource depleted at: ", mining_tile_coords)
+	else:
+		# Log error if we couldn't find the layer holder
+		push_error("Could not find LayerHolder to deplete mineral resource")
+	
+	# Reset mining target
+	is_mining_target = false
+	mining_tile_coords = Vector2i(-1, -1)
+
+# Cancel mining if interrupted
+func cancel_mining():
+	if is_mining:
+		is_mining = false
+		mining_progress = 0.0
+		queue_redraw()

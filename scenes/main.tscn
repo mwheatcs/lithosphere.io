@@ -960,6 +960,7 @@ script/source = "extends TileMapLayer
 [node name="Main" type="Node2D"]
 
 [node name="layerHolder" type="Node2D" parent="."]
+unique_name_in_owner = true
 script = ExtResource("1_1bvp3")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="layerHolder"]

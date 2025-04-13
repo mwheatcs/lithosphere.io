@@ -21,6 +21,9 @@ var resource_nodes := []  # Will store all resource nodes for fog of war visibil
 var fog_state_map := {}  # Tracks the fog state of each cell (0=unexplored, 1=explored, 2=visible)
 
 func _ready():
+	# Add world to a group so it can be found easily
+	add_to_group("world")
+	
 	# Set process_input to true to ensure input events are processed
 	set_process_input(true)
 	# Set process to true to ensure _process is called
