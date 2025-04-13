@@ -954,8 +954,7 @@ sources/1 = SubResource("TileSetAtlasSource_kek77")
 sources/2 = SubResource("TileSetAtlasSource_4c57u")
 
 [sub_resource type="GDScript" id="GDScript_dg77c"]
-script/source = "extends TileMapLayer
-"
+script/source = "extends TileMapLayer"
 
 [node name="Main" type="Node2D"]
 
@@ -969,4 +968,4 @@ tile_set = SubResource("TileSet_efxa6")
 
 [node name="Minerals" type="TileMapLayer" parent="layerHolder"]
 tile_set = SubResource("TileSet_efxa6")
-script = SubResource("GDScript_dg77c")
+
