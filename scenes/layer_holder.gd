@@ -17,7 +17,7 @@ const ORE4_POS = Vector2i(4,17)
 const ORE4_DEPLETED_POS = Vector2i(6,17)
 const STONE_POS = Vector2i(17,13)
 
-const MINING_RANGE = 50.0
+const MINING_RANGE = 100.0
 const CELL_SIZE = Vector2(16, 16) 
 
 func _ready() -> void:
@@ -75,11 +75,9 @@ func _input(event: InputEvent) -> void:
 				print("No selected unit is close enough to mine this ore.")
 
 func can_any_selected_unit_mine(tile_coords: Vector2i) -> bool:
-	# Calculate the world position of the tile's center:
-	# (tile_coords * CELL_SIZE) gives the tile's top-left local position within the layer.
-	# minerals.global_position offsets that to world space.
-	# Adding half the CELL_SIZE gets us the center of the tile.
-	var tile_world_pos = minerals.global_position + (Vector2(tile_coords) * CELL_SIZE) + (CELL_SIZE * 0.5)
+	var tile_local_center = Vector2(tile_coords) * CELL_SIZE + (CELL_SIZE * 0.5)
+	var tile_world_pos = minerals.global_transform * tile_local_center
+
 
 	# Loop through each selected unit from the selection manager (world node)
 	for unit in world_manager.selected_units:
