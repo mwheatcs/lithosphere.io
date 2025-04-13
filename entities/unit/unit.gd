@@ -62,7 +62,7 @@ func draw_collision_outline():
 	var line_thickness = 2.0
 	
 	# Get the collision polygon node (assuming it's named "UnitCollisionPolygon" - adjust name as needed)
-	var collision_polygon = get_node("UnitCollisionPolygon")
+	var collision_polygon = get_node_or_null("UnitCollisionPolygon")
 	
 	# Check if it exists and has valid polygon data
 	if collision_polygon and collision_polygon is CollisionPolygon2D and not collision_polygon.polygon.is_empty():
