@@ -30,7 +30,7 @@ position = Vector2(215, 325)
 [node name="Buildings" parent="." instance=ExtResource("5_1lgw5")]
 
 [node name="Camera2D" type="Camera2D" parent="."]
-offset = Vector2(350, 350)
+offset = Vector2(650, 350)
 script = ExtResource("6_hlk0d")
 
 [connection signal="buy_factory" from="Display" to="Buildings" method="_on_display_buy_factory"]
