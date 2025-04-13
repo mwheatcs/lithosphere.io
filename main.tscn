@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=4 uid="uid://vb12gyg0t26t"]
 
-[ext_resource type="Script" path="res://layer_holder.gd" id="1_1bvp3"]
+[ext_resource type="Script" uid="uid://kepeewlgii2l" path="res://layer_holder.gd" id="1_1bvp3"]
 [ext_resource type="Texture2D" uid="uid://cjqtuxwf75751" path="res://assets/TilesetFloor.png" id="2_lquwl"]
 [ext_resource type="Texture2D" uid="uid://ccjfqbix63o6n" path="res://assets/TilesetFloorDetail.png" id="3_7mycd"]
 [ext_resource type="Texture2D" uid="uid://7jhbgxuch0pc" path="res://assets/TilesetNature.png" id="4_272bh"]
